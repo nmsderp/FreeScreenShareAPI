@@ -5,6 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FreeScreenshareAPI</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <script>
+    async function fetchCommits(repoName, limit = 5) {
+      try {
+        const response = await fetch(`https://api.github.com/repos/${repoName}/commits?per_page=${limit}`);
+        const commits = await response.json();
+        return commits;
+      } catch (error) {
+        console.error('Error fetching commits:', error);
+        return [];
+      }
+    }
+
+    async function displayCommits(repoName, containerId) {
+      const commits = await fetchCommits(repoName);
+      const container = document.getElementById(containerId);
+
+      commits.forEach(commit => {
+        const commitLink = document.createElement('a');
+        commitLink.href = commit.html_url;
+        commitLink.textContent = commit.commit.message;
+
+        const listItem = document.createElement('li');
+        listItem.appendChild(commitLink);
+
+        container.appendChild(listItem);
+      });
+    }
+
+    window.onload = function () {
+      displayCommits('nmsderp/FreeScreenShareAPI', 'firstRepoCommits');
+      displayCommits('thepython555/Infinity-Server', 'secondRepoCommits');
+    };
+  </script>
 </head>
 <body>
   <h1>FreeScreenshareAPI</h1>
@@ -20,5 +53,11 @@
   <p>Click <a href="https://freescreenshareapi.vercel.app/tutorial">here</a> to read the tutorial on how to use it.</p>
   <h2>Thanks to @thepython555 on GitHub our screensharing choppiness has improved</h2>
   <p>We now use <a href="https://github.com/thepython555/Infinity-Server">Infinity Server's</a>&nbsp;servers to host this.</p>
+
+  <h2>Latest 5 Commits for FreeScreenShareAPI</h2>
+  <ul id="firstRepoCommits"></ul>
+
+  <h2>Latest 5 Commits for Infinity Server</h2>
+  <ul id="secondRepoCommits"></ul>
 </body>
 </html>
